@@ -1,0 +1,380 @@
+\documentclass[a4paper, oneside]{article}
+\usepackage{amsmath, amssymb, amsthm, graphicx, fancyhdr, ctex, breqn}
+\title{\textbf{连续性和极限在拓扑空间的拓展定义}}
+\author{王瑞涵}
+\date{2025.1}
+\linespread{1.2}
+\pagestyle{fancy}
+\rhead{HW for Mathmatical Analysis}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+    本文围绕极限和连续性的定义，探讨了从传统函数距离定义到拓扑空间的一般化推广。首先，回顾了基于实数距离的经典定义及其局限性，继而通过引入度量空间，扩展了极限和连续性的适用范围。随后，本文进一步引入拓扑空间，以开集为基础统一了描述方式，摆脱了对距离的依赖。在此基础上，本文重点介绍了滤基的概念及其在统一点列极限和其他例子中的重要作用，并深入探讨了滤基与紧集的关系，展示了紧集在定义连续性中的核心地位。最后，通过对各种定义的比较，本文总结了连续性和极限在拓扑空间下的普适性和统一性。
+\end{abstract}
+
+\section{引言}
+极限和连续性一直是数学分析中的重要工具，我们将从二者的传统定义（实数距离）入手，通过例子找到当前定义的局限性，并提出更完善更普适的定义方法。在每一种定义下，本文都从背景概念，举例，极限定义，连续性定义，这种定义下相较于之前的优越性和包含性，这种定义下仍存在的不足几个方面入手。通过不断优化定义方法，最后自然推得用滤基语言的普适性定义。
+\section{传统定义}
+\subsection{极限定义}
+函数 $f: \mathbb{R} \to \mathbb{R}$ 在点 $x_0$ 处有极限 $L$当且仅当
+\[
+\forall \epsilon > 0, \exists \delta > 0, \text{使得当} 0 < |x - x_0| < \delta \text{时，有} |f(x) - L| < \epsilon.
+\]
+\subsection{连续性定义}
+基于$\epsilon-\delta$语言的连续性描述:
+
+函数 $f: \mathbb{R} \to \mathbb{R}$ 在$x_0$处连续当且仅当
+\[
+    \forall \epsilon > 0, \exists \delta > 0, \text{使得当} |x - x_0| < \delta \text{时，有} |f(x) - f(x_0)| < \epsilon.
+\]
+
+一致连续性描述:
+
+函数 $f: \mathbb{R} \to \mathbb{R}$ 在定义域上一致连续当且仅当
+\[
+    \forall \epsilon > 0, \exists \delta > 0, \text{使得对于} \forall x_1, x_2 \in \mathbb{R}, \text{如果} |x_1 - x_2| < \delta, \text{则有} |f(x_1) - f(x_2)| < \epsilon.
+\]
+\subsection{局限性}
+按照实数距离的定义在下面两个例子中有局限性：
+\subsubsection{处理周期性或快速震荡变化情况}
+考虑函数 $f: \mathbb{R} \to \mathbb{R}$，定义为：
+\[
+f(x) =
+\begin{cases}
+\sin\left(\frac{1}{x}\right), & x \neq 0, \\
+0, & x = 0.
+\end{cases}
+\]
+当 $x \to 0^+$ 或 $x \to 0^-$ 时，$\sin\left(\frac{1}{x}\right)$ 在 $[-1, 1]$ 内无穷次震荡，无法趋近于任何单一值，因此不连续\\
+实数距离仅关注函数值的绝对差异，而忽略了函数在小区域内的复杂震荡行为
+\subsubsection{处理近似一致情况}
+考虑两个函数：
+\[
+f_1(x) = x^2, \quad x \in [0, 1],
+\]
+和
+\[
+f_2(x) =
+\begin{cases}
+x^2, & x \neq \frac{1}{2}, \\
+x^2 + 1, & x = \frac{1}{2}.
+\end{cases}
+\]
+判断 $f_1$ 和 $f_2$ 的连续性和差异 \\
+$f_1$ 在整个区间 $[0, 1]$ 上连续。\\
+$f_2$ 在 $x = \frac{1}{2}$ 不连续，因为函数值在该点跳跃到 $x^2 + 1$ \\
+大多数点附近，$f_1$ 和 $f_2$ 的行为几乎相同，但在 $x = \frac{1}{2}$，$f_2$ 的单点跳跃行为无法通过传统的 $\epsilon-\delta$ 语言清晰刻画
+
+\section{度量空间中的推广}
+\subsection{度量空间定义}
+度量空间是满足特定结构的集合，度量，是在这个集合上指定的刻画距离的函数。用数学语言描述如下：
+如果选定 $d:X\times X\rightarrow  \mathbb{R} $满足条件：
+\begin{enumerate}
+    \item $d(x_1,x_2) = 0 \Leftrightarrow x_1 = x_2 $
+    \item $d(x_1,x_2) = d(x_2,x_1) $
+    \item $d(x_1,x_3)\le d(x_1,x_2) + d(x_2,x_3) $
+\end{enumerate}
+其中$x_1,x_2,x_3$是X的任意元素。那么称集合X是度量空间，d是度量
+\subsection{度量空间的例子}
+\subsubsection{均方差}
+在$\mathbb{R}^n$中，有两点$x_1 = (x_1^1, x_1^2,\ldots, x_1^n), x_2 = (x_2^1, x_2^2,\ldots, x_2^n)$, 引入距离
+\[
+    d_p(x_1, x_2) = (\sum_{i = 1}^{n} |x_1^i - x_2^i|^p)^{1/p}, p \geq 1
+\]
+
+由\textbf{闵可夫斯基不等式}
+\[
+    \text{设}x_i \geq 0, y_i \geq 0 (i = 1, \ldots, n), \text{则} \\
+    (\sum_{i = 1}^{n} (x_i + y_i)^p)^{1/p} \leq (\sum_{i = 1}^{n} x_i^p)^{1/p} + (\sum_{i = 1}^{n} y_i^p)^{1/p}, p > 1
+\] 
+
+可知，三角形不等式成立，集合是一个度量空间
+
+$p = 2$时的度量是在比较n次同类测量的两组结果时最常用的度量。此时两点的距离为两点的均方差
+\subsubsection{球}
+当$\delta > 0, a \in X$时，集合$B(a, \delta) = {x \in X \mid d(a, x) < \delta}$称为以$a \in X$为中心，以$\delta$为半径的球， 或者$a$的$\delta$邻域.
+
+在$C[a, b]$中，以在$[a, b]$上恒等于零的函数为中心的单位球，由在$[a, b]$上连续并且模小于1的函数组成
+
+\subsubsection{非标准度量}
+不仅欧几里得距离可以作为度量，还有一些非标准的度量方式，例如：
+\[
+d(x, y) = \begin{cases} 
+1, & x \neq y, \\
+0, & x = y.
+\end{cases}
+\]
+这一离散度量使得任意子集都是开集，也为后续拓扑空间中的讨论提供了启发。通过这一度量可以看到，距离的定义本身是多样的，拓扑空间的推广允许我们进一步脱离对具体距离函数的依赖。
+
+
+\subsection{极限的定义}
+设 $(X, d_X)$ 是一个度量空间，函数 $f: X \to \mathbb{R}$，我们称点 $L \in \mathbb{R}$ 为函数 $f$ 在 $x_0 \in X$ 的极限，当且仅当：
+\[
+\forall \epsilon > 0, \exists \delta > 0, \text{使得当 } 0 < d_X(x, x_0) < \delta \text{ 时，有 } |f(x) - L| < \epsilon.
+\]
+
+即\( f(x) \) 在 $x_0$ 附近的值可以任意接近 $L$，只要 \( x \) 足够靠近 $x_0$（但不等于 $x_0$）
+\subsection{连续性的定义}
+设 $(X, d_X)$ 和 $(Y, d_Y)$ 是两个度量空间，函数 $f: X \to Y$ 被称为在点 $x_0 \in X$ 连续，当且仅当：
+\[
+\forall \epsilon > 0, \exists \delta > 0, \text{使得当 } d_X(x, x_0) < \delta \text{ 时，有 } d_Y(f(x), f(x_0)) < \epsilon.
+\]
+\subsection{应用}
+\subsubsection{欧几里得空间中的连续性}
+在欧几里得空间 $(\mathbb{R}^2, d)$ 中，$d$ 是通常的欧几里得距离：
+\[
+d((x_1, y_1), (x_2, y_2)) = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}.
+\]
+我们可以看到在度量空间中定义的连续性是包含用实数距离定义的一致性的，度量空间中的定义让距离的定义变得更加广泛。
+\section{拓扑空间中的定义}
+\subsection{拓扑空间的定义}
+一个拓扑空间 $(X, \tau)$ 是一个集合 $X$ 和其上的一个拓扑 $\tau$ 的二元组，其中 $\tau$ 是 $X$ 的子集族，满足以下条件：
+\begin{enumerate}
+    \item 空集和 $X$ 本身是 $\tau$ 的元素，即 $\emptyset \in \tau$ 且 $X \in \tau$
+    \item 任意数量的集合的并属于 $\tau$，即对任意的 $\{U_\alpha\}_{\alpha \in A} \subseteq \tau$，有 $\bigcup_{\alpha \in A} U_\alpha \in \tau$
+    \item 有限数量的集合的交属于 $\tau$，即对任意的 $U_1, U_2, \dots, U_n \in \tau$， 有$\bigcap_{i=1}^n U_i \in \tau$
+\end{enumerate}
+拓扑空间中的元素称为点，$\tau$ 的元素称为开集。
+
+\textbf{例子：实数系上的标准拓扑}
+\begin{enumerate}
+    \item 集合：设集合 $X = \mathbb{R}$，即实数集。
+    \item 拓扑：定义拓扑 $\tau$ 为实数集上的所有开区间的并构成的集合族。例如，$ (a, b) \subseteq \mathbb{R} $ 是一个开区间，其中 $a, b \in \mathbb{R}$ 且 $a < b$。更一般地，拓扑 $\tau$ 包括空集 $\emptyset$、全集 $\mathbb{R}$ 以及任意数量的开区间的并。
+\end{enumerate}
+这样，拓扑空间 $(\mathbb{R}, \tau)$ 被称为\textbf{实数系上的标准拓扑}。\\
+根据后面定义易知实数上的标准拓扑是一个\textbf{第一可数空间}，因为每个点都有一个可数的邻域基。
+
+\subsection{拓扑空间中的极限定义}
+
+在拓扑空间中，极限的概念可以通过多种方式来刻画。与度量空间不同，拓扑空间中的极限并不完全依赖于距离度量，而是依赖于拓扑结构和集合的邻域性质。\\
+\setlength{\parindent}{2em}常见的几种极限定义包括极限点的定义、序列收敛的定义以及滤子收敛的定义。其中，滤子收敛我们会在下文讲述。
+
+\subsubsection{极限点的定义}
+
+设 \( X \) 是一个拓扑空间，\( A \subseteq X \)。点 \( x \in X \) 是集合 \( A \) 的极限点，当且仅当对于 \( x \) 的任意邻域 \( U \)，有
+\[
+(U \cap A) \setminus \{x\} \neq \emptyset.
+\]
+意味着 \( x \) 的每个邻域都包含集合 \( A \) 中的某个点，且该点不等于 \( x \)。这种定义适用于一般的拓扑空间，并且通过邻域的性质直观地反映了极限的行为
+
+\textbf{例子}
+令 $A = \{1/n : n \in \mathbb{N}^+\} \subset \mathbb{R}$。我们来寻找 $A$ 的极限点：
+    点 $0$ 是 $A$ 的极限点，因为对于 $0$ 的任意邻域 $U$，总有 $U \cap A \neq \emptyset$，即存在 $1/n \in U$。$0$ 不属于 $A$，但它是 $A$ 的极限点。集合 $A$ 中的任意点 $1/n$ 不是极限点，因为可以找到一个邻域 $U$，使得 $U \cap A = \{1/n\}$，满足 $(U \cap A) \setminus \{1/n\} = \emptyset$\\
+几何直观地看，极限点 $0$ 表示集合 $A$ 在逐渐“逼近” $0$ 的过程中没有跳跃，但它并不一定属于 $A$。
+
+这说明极限点定义不仅关注集合中的点，还关注集合在拓扑结构中的逼近行为。
+
+\subsubsection{序列收敛}
+
+设 \( \{x_n\} \subseteq X \) 是拓扑空间 \( X \) 中的点列，若该序列收敛于点 \( x \in X \)，则对于 \( x \) 的任意邻域 \( U \)，存在正整数 \( N \)，使得对于所有 \( n \geq N \)，都有
+\[
+x_n \in U.
+\]
+对于任意包含 \( x \) 的邻域 \( U \)，从某一项起，序列的所有项都在 \( U \) 中。尽管序列收敛在许多经典情况下能有效地描述极限行为，但其适用性有限，因为在更一般的拓扑空间中，序列往往不能完全捕捉极限的所有性质。
+
+\textbf{例子}
+考虑点列 $x_n = 1/n$ 在实数空间 $\mathbb{R}$ 中的收敛性：
+    点列 $x_n$ 收敛于 $0$，因为对于任意 $\epsilon > 0$，取 $N = \lceil 1/\epsilon \rceil$，当 $n \geq N$ 时，有 $|x_n - 0| = 1/n < \epsilon$\\
+    点列 $x_n$ 不会收敛于 $a \neq 0$，因为存在邻域 $U(a)$（例如 $(a - \epsilon, a + \epsilon)$）使得 $x_n \notin U(a)$
+
+几何直观地看，点列 $x_n = 1/n$ 的收敛表示每次取更大的 $n$ 时，点列逐渐逼近 $0$，并最终停留在其邻域内。这种行为是序列收敛的典型表现
+
+\subsection{拓扑空间的连续性}
+设 $(X, \tau_X)$ 和 $(Y, \tau_Y)$ 是两个拓扑空间，函数 $f: X \to Y$ 是连续的，当且仅当对于任意 $V \in \tau_Y$，其逆像 $f^{-1}(V) \in \tau_X$。
+
+\subsubsection{与度量空间中的连续性关系}
+
+- 在度量空间中，基于 $\epsilon-\delta$ 的连续性定义与拓扑空间中的连续性定义是等价的
+
+- 拓扑空间中的定义是一种更抽象、更一般的描述，因为它不依赖距离的概念。
+
+\textbf{实例：欧几里得空间与离散拓扑的对比}\\
+欧几里得空间 $\mathbb{R}^n$ 的拓扑由开球生成，其连续性定义依然可以通过 $\epsilon-\delta$ 的语言描述。然而，在离散拓扑中，每个点都是一个开集，此时任意函数 $f: X \to Y$ 都是连续的。两者的对比显示，拓扑空间的连续性定义是基于开集的映射行为，而非依赖具体的距离。
+
+\subsection{应用}
+\subsubsection{欧几里得空间的标准拓扑}
+欧几里得空间 $\mathbb{R}^n$ 的拓扑由所有开球 $B(x, r) = \{y \in \mathbb{R}^n : \|y - x\| < r\}$ 所生成。函数 $f: \mathbb{R}^n \to \mathbb{R}^m$ 连续，当且仅当满足 $\epsilon-\delta$ 的定义。这说明拓扑空间的定义包含了度量空间的情况。
+
+\section{滤基与统一定义}
+\subsection{滤基的引入背景}
+\subsubsection{第一可数空间定义与非第一可数空间}
+\begin{itemize}
+    \item 第一可数空间：一个拓扑空间是第一可数的，如果它的每个点都有一个可数的邻域基。例如，欧几里得空间就是第一可数空间。
+    \item 非第一可数空间：如果某点没有可数的邻域基，则称为非第一可数空间。例如，上半区间拓扑 $[0, 1] \cup \{2\}$。
+\end{itemize}
+\subsubsection{拓扑空间局限性}
+\begin{itemize}
+    \item 在第一可数空间中，点列可以完全刻画极限，但无法直接用于描述连续性或紧集的性质。
+    \item 在非第一可数空间中，点列的不足尤为明显，因为点列无法涵盖所有极限行为。
+\end{itemize}
+为了解决这些问题，我们引入了一种更一般的工具——滤基，它可以统一极限、连续性和紧集的描述。
+
+\subsection{滤基的定义}
+在拓扑空间 $(X, \tau)$ 中，滤基（filter base）是 $X$ 的一个子集族 $\mathcal{B}$，满足以下条件：
+\begin{enumerate}
+    \item $\mathcal{B} \neq \emptyset$，即 $\mathcal{B}$ 中至少包含一个集合；
+    \item 对任意 $B_1, B_2 \in \mathcal{B}$，存在 $B_3 \in \mathcal{B}$，使得 $B_3 \subseteq B_1 \cap B_2$（闭包性条件）；
+    \item 如果 $B \in \mathcal{B}$ 且 $B \subseteq C \subseteq X$，则 $C \in \mathcal{B}$。
+\end{enumerate}
+
+滤基 $\mathcal{B}$ 生成一个滤子（filter），记为 $\mathcal{F}$，定义为包含 $\mathcal{B}$ 所有超集的集合族：
+\[
+\mathcal{F} = \{C \subseteq X : \exists B \in \mathcal{B}, B \subseteq C\}.
+\]
+
+\textbf{直观解释}：
+滤基是对点列的推广，其核心思想是用包含某点邻域的集合族来描述该点的趋近行为。在点列足够的空间中，点列生成的滤基可以完全刻画极限；而在非第一可数空间中，滤基能够弥补点列描述的不足。
+\begin{itemize}
+    \item 在欧几里得空间 $(\mathbb{R}^n, d)$ 中，中心为 $x$，半径依次缩小的开球 \( B(x, \frac{1}{n}) \) 构成一个滤基。
+    \item 在离散拓扑中，每个单点集 $\{x\}$ 都是自身的滤基。
+\end{itemize}
+通过滤基，可以在非第一可数空间中刻画更一般的趋近行为
+
+\textbf{经典滤基举例}
+
+设X是一个度量空间，定义一个点列$\{x_n\}$的柯西滤基为
+\[
+    \mathcal{B} = \{\{x_k > : k \geq N \}: N \in \mathbb{N} \}
+\]
+性质
+\begin{itemize}
+    \item 对$\forall N_1, N_2 \in \mathbb(N), \exists N_3 = max\{N_1, N_2\}$使得$\{x_k:k \geq N_3\} \subseteq \{x_k:k \geq N_1\} \cap \{x_k: k \geq N_2\}$
+    \item 柯西滤基用于度量空间中刻画序列的收敛性和紧性
+\end{itemize}
+
+
+\subsection{滤基的极限}
+在拓扑空间 $(X, \tau)$ 中，点 $x \in X$ 被称为滤基 $\mathcal{B}$ 的极限，当且仅当对于 $x$ 的任意邻域 $U \in \tau$，都有 $B \cap U \neq \emptyset$，其中 $B \in \mathcal{B}$。
+
+\textbf{点列极限与滤基极限的关系}：
+\begin{itemize}
+    \item 在第一可数空间中，点列 $\{x_n\}$ 收敛到 $x$ 等价于该点列生成的滤基也收敛到 $x$。
+    \item 在非第一可数空间中，点列无法描述所有极限，而滤基定义可以涵盖所有情况。例如，上半区间拓扑 \( X = [0,1] \cup \{2\} \) 中的极限无法通过点列完全描述，但可以使用滤基刻画。
+\end{itemize}
+
+\subsection{滤基下的连续性}
+函数 $f: X \to Y$ 在点 $x_0 \in X$ 处连续，当且仅当对于任意滤基 $\mathcal{B}$，如果 $\mathcal{B}$ 在 $X$ 中收敛到 $x_0$，则 $f(\mathcal{B})$ 在 $Y$ 中收敛到 $f(x_0)$。
+
+\textbf{直观解释}：
+滤基下的连续性强调函数 $f$ 保持“邻域结构”的一致性。即，输入滤基趋近某点，输出滤基必然趋近相应的映射点。
+
+\textbf{例子}：
+设 $f: \mathbb{R} \to \mathbb{R}$，定义为 $f(x) = x^2$。对于滤基 $\mathcal{B} = \{(-\delta, \delta)\}_{\delta > 0}$，其在 $x_0 = 0$ 处收敛，故 $f(\mathcal{B}) = \{(-\delta^2, \delta^2)\}_{\delta > 0}$ 收敛于 $f(0) = 0$。
+
+\subsection{应用}
+\subsubsection{欧几里得空间中的滤基极限}
+在欧几里得空间 $(\mathbb{R}^n, \tau)$ 中，滤基 $\mathcal{B}$ 的极限与传统的点列极限一致。例如，开球构成的滤基 $\mathcal{B} = \{B(x, \frac{1}{n}) : n \in \mathbb{N}\}$ 收敛到点 $x$。
+\subsubsection{函数连续性}
+设 $f: \mathbb{R} \to \mathbb{R}$，定义为 $f(x) = x^2$。对于任意收敛到 $x_0$ 的滤基 $\mathcal{B}$，$f(\mathcal{B})$ 收敛到 $f(x_0)$，验证了函数的滤基连续性。
+
+\section{紧集与滤基的结合}
+
+\subsection{紧集的定义}
+
+\subsubsection{度量空间中的紧集}
+
+在度量空间 $(X, d)$ 中，集合 $K \subseteq X$ 是紧的，当且仅当它是闭的且有界的。
+
+等价描述：$K$ 是紧集，当且仅当任意由 $K$ 中点组成的序列 $\{x_n\}$ 至少有一个收敛子列 $\{x_{n_k}\}$，并且该子列的极限点仍属于 $K$。
+
+\textbf{实例：欧几里得空间中的紧集}
+
+在欧几里得空间 $(\mathbb{R}^n, d)$ 中，闭的、有界的集合是紧的。例如：
+\[
+K = \{(x, y) \in \mathbb{R}^2 : x^2 + y^2 \leq 1\}.
+\]
+验证：对于任意由 $K$ 中点组成的序列 $\{(x_n, y_n)\}$，如果该序列有收敛子列，则其极限点必在 $K$ 内
+
+\subsubsection{拓扑空间中的紧集}
+
+在拓扑空间 $(X, \tau)$ 中，集合 $K \subseteq X$ 是紧的，当且仅当任意开覆盖 $\{U_\alpha\}_{\alpha \in A}$ 都存在有限子覆盖 $\{U_{\alpha_1}, U_{\alpha_2}, \dots, U_{\alpha_n}\}$，使得：
+\[
+K \subseteq U_{\alpha_1} \cup U_{\alpha_2} \cup \dots \cup U_{\alpha_n}.
+\]
+
+\subsection{紧集与滤基的结合}
+
+\subsubsection{滤基语言描述紧集：}
+
+集合 $K \subseteq X$ 是紧的，当且仅当对任意滤基 $\mathcal{B}$，如果 $\mathcal{B}$ 的所有集合都与 $K$ 有非空交集（即 $\forall B \in \mathcal{B}, B \cap K \neq \emptyset$），那么 $\mathcal{B}$ 至少有一个聚点 $x \in K$。
+
+\textbf{直观解释}：\\
+滤基描述紧集的方式是考察所有与 $K$ 有非空交集的滤基，并验证这些滤基是否一定有聚点落在 $K$ 中。
+
+\textbf{滤基如何统一紧集的定义}:\\
+- 在第一可数空间中，点列紧性和滤基紧性等价：对于任意点列 $\{x_n\} \subseteq K$，总存在收敛子列，其极限点属于 $K$。滤基语言在此直接推广了点列的描述。
+- 在非第一可数空间中，点列可能无法完全描述紧集的性质，而滤基语言则弥补了这一不足。例如，在上半区间拓扑 $X = [0, 1] \cup \{2\}$ 中，点列无法捕捉到 $[0, 1]$ 的紧性，但滤基可以完整描述。
+
+\textbf{例子：非第一可数区间的紧集}:
+
+在拓扑空间 $X = [0, 1] \cup \{2\}$ 上，$[0, 1]$ 是紧的。假设滤基 $\mathcal{B}$ 满足
+\[
+\forall B \in \mathcal{B}, B \cap [0, 1] \neq \emptyset,
+\]
+则 $\mathcal{B}$ 必有一个聚点落在 $[0, 1]$ 内。这说明滤基语言可以完全刻画紧集的性质，而点列在此空间中无法提供完整描述。
+
+\subsubsection{滤基语言的统一性}
+通过滤基语言，可以统一度量空间中的点列紧性和拓扑空间中的开覆盖定义，同时为非第一可数空间提供了更一般的描述工具。这种统一性不仅揭示了紧集的本质，还为极限和连续性的定义提供了坚实的理论基础
+
+\textbf{例子}：  
+
+在单位区间 \([0, 1]\) 中，任取点列 \(\{x_n\} \subseteq [0, 1]\)，该点列必然至少有一个收敛子列，且该子列的极限点仍属于 \([0, 1]\)。  
+例如，点列 \(x_n = 1 - \frac{1}{n}\) 收敛于 \(1\)，而 \(1 \in [0, 1]\)。
+
+\textbf{基于滤基的紧性}
+集合 \(K \subseteq X\) 是紧的，当且仅当对于任意滤基 \(\mathcal{B}\)，如果所有滤基集合与 \(K\) 非空交，则 \(\mathcal{B}\) 至少有一个聚点落在 \(K\) 中。
+
+\textbf{例子}： 
+
+考虑以 \([0, 1]\) 为目标的滤基 \(\mathcal{B}\)，假设 \(\mathcal{B} = \{B(x, \frac{1}{n}) \cap [0, 1] : n \in \mathbb{N}, x \in [0, 1]\}\)。  
+这是以区间内某点 \(x \in [0, 1]\) 为中心，半径依次缩小的开区间与 \([0, 1]\) 的交集构成的滤基。  
+由滤基定义，这样的集合族描述了 \([0, 1]\) 中点的趋近行为。  
+由于 \([0, 1]\) 是紧的，滤基 \(\mathcal{B}\) 必有一个聚点 \(x^* \in [0, 1]\)。
+
+\textbf{滤基与点列的关系}
+
+在第一可数空间（如欧几里得空间）中，点列生成的滤基正好可以描述该点列的极限行为。  
+例如，点列 \(\{x_n = \frac{1}{n}\}\) 生成的滤基 \(\mathcal{B} = \{ \{x_n, x_{n+1}, \dots\} : n \in \mathbb{N}\}\)，其收敛于 \(0 \in [0, 1]\)。
+
+\subsubsection{总结}
+通过该例子可以看出，在第一可数空间中，点列紧性和滤基紧性是等价的，因为所有极限行为都可以通过点列生成的滤基描述。然而，在更一般的非第一可数空间中，点列紧性可能无法完全刻画紧集的性质，而滤基紧性可以涵盖所有情况。
+
+\section{总结与对比}
+
+\subsection{连续性的演化}
+
+本论文回顾了连续性定义从传统到现代的演化过程：
+\begin{itemize}
+    \item 在实数及欧几里得空间中，连续性通过 $\epsilon-\delta$ 语言定义，其核心思想是用输入的变化幅度控制输出的变化幅度。
+    \item 在度量空间中，连续性的定义推广为基于距离的描述，保留了 $\epsilon-\delta$ 的形式，但其范围从欧几里得空间拓展到更广泛的度量空间。
+    \item 在拓扑空间中，连续性的定义摆脱了距离的依赖，通过开集描述函数的映射行为，展现了定义的高度抽象性。
+    \item 在滤基语言下，连续性被统一为保持滤基极限的形式，这种描述不仅统一了点列和开集定义，还适用于更广泛的非第一可数空间。
+\end{itemize}
+
+\subsection{极限的统一}
+
+极限定义在本论文中经历了从点列到滤基的统一：
+\begin{itemize}
+    \item 点列极限是度量空间及第一可数空间中极限的标准描述，但在非第一可数空间中存在不足。
+    \item 滤基极限则提供了一种更一般的框架：它不仅包含点列极限，还能够描述非第一可数空间中的极限行为。
+    \item 通过滤基语言，极限的定义摆脱了具体空间结构的限制，成为统一的数学工具。
+\end{itemize}
+
+\subsection{推广的意义}
+
+通过从传统到抽象的演化过程，可以看到数学定义的抽象性和统一性的力量：
+\begin{itemize}
+    \item \textbf{抽象性}：滤基语言的引入，使得极限和连续性不再依赖于点列或距离，而是直接刻画了函数在拓扑空间中的趋近行为。
+    \item \textbf{统一性}：滤基统一了点列极限、开集定义和连续性的描述，展示了数学语言的普适性。
+    \item \textbf{适用性}：滤基语言为处理非第一可数空间和复杂拓扑结构提供了强大工具，在泛函分析、拓扑动力系统等领域有广泛应用。
+\end{itemize}
+
+\begin{thebibliography}{99} 
+    \bibliographystyle{alpha}
+    \bibitem{ref1}B.A.卓里奇.《数学分析》(第七版) 第九章，第五章，第十章
+    \bibitem{ref2}https://zhuanlan.zhihu.com/p/545118902
+    \bibitem{ref3}https://zhuanlan.zhihu.com/p/533532524
+\end{thebibliography}
+\end{document}
