@@ -1,0 +1,424 @@
+\documentclass[a4paper, oneside]{article}
+\usepackage{amsmath, amssymb, amsthm, graphicx, fancyhdr, ctex, breqn, amsfonts, hyperref}
+\title{\textbf{面积的推广：从可测集到高维空间中的体积定义}}
+\author{王瑞涵}
+\date{2025.6}
+\linespread{1.2}
+\pagestyle{fancy}
+\rhead{HW for Mathmatical Analysis}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+本文探讨了面积概念在数学中的定义与推广，从 Riemann 积分中的传统面积出发，引入 Lebesgue 测度理论以克服其局限，并进一步通过参数化与微分结构推广至曲面面积与高维体积，展示了面积概念从直观几何到抽象测度的演化过程。
+\end{abstract}
+
+\section{引言}
+在数学分析中，最早对“面积”进行严格刻画的是 Riemann 积分，它通过对定义域的划分、函数值的加权求和，以及取极限的方式定义积分，从而赋予二维区域“面积”的含义。然而，Riemann 积分在面对函数的不连续性或区域的非规则性时，显得力不从心。许多具有明确几何意义的集合，甚至无法通过 Riemann 方法定义其面积。
+
+随着数学对函数与集合结构理解的深入，Lebesgue 积分应运而生。它摒弃了对定义域的划分，转而从函数值的角度出发，结合集合的测度，引入更广泛、更灵活的积分理论。这一理论不仅改进了可积性的判断标准，也拓展了面积的适用对象和定义方式。
+
+进一步地，当我们研究空间中曲面甚至更高维流形时，传统面积的定义方式再次面临挑战。通过微分几何与参数化方法，我们可以定义曲面的面积元；再通过Jacob矩阵与 Hausdorff 测度理论，我们得以将面积这一概念推广至高维空间中的 $k$ 维体积，乃至分形对象。
+
+本文将系统梳理面积的不同数学定义路径，展示从 Riemann 积分到 Lebesgue 测度、从二维平面到高维流形的思想演进，揭示“面积”在数学中的本质以及其现代抽象化表达的必要性与合理性。
+
+\section{可测面积的传统定义及其局限}
+\subsection{传统定义}
+
+在传统数学分析中，面积的概念最早是通过 Riemann 积分形式化定义的。对于一个有界闭区域 $D \subset \mathbb{R}^2$，我们通常通过将其划分为有限个矩形子区域，再求和以近似面积。这一思想的核心在于“划分—取值—求和—取极限”。
+
+我们先从一维情况出发，设 $f:[a,b]\to\mathbb{R}$ 为有界函数，在区间 $[a,b]$ 上定义一个划分 $P: a = x_0 < x_1 < \dots < x_n = b$，并在每个子区间 $[x_{i-1}, x_i]$ 中选取一个点 $\xi_i \in [x_{i-1}, x_i]$，构造 Riemann 和：
+\[
+R(f,P,\{\xi_i\}) = \sum_{i=1}^{n} f(\xi_i)(x_i - x_{i-1})
+\]
+当划分变得足够细时，若这个和趋于某个确定的极限，并且极限与选择的样点无关，我们就说函数 $f$ 在区间 $[a,b]$ 上是 Riemann 可积的。
+
+在二维情形，考虑区域 $D \subset \mathbb{R}^2$，可以对其进行矩形剖分，构造双Riemann和：
+\[
+\sum_{i=1}^{m} \sum_{j=1}^{n} f(\xi_{ij}, \eta_{ij}) \Delta x_i \Delta y_j
+\]
+其中 $(\xi_{ij}, \eta_{ij})$ 是每个小矩形内部的一个点。若这个和在划分无限细时趋于某一极限值，并且与选择的样点无关，我们就说函数 $f$ 在区域 $D$ 上是 Riemann 可积的。特别地，当 $f(x,y) \equiv 1$ 时，所得积分值就是区域 $D$ 的面积。
+
+\paragraph{Darboux准则（上、下和判据）}
+
+为了不依赖样点选择，Darboux 引入了上下和的概念：
+- 在区间 $[a,b]$ 上定义 $f$ 的下和：
+\[
+L(f,P) = \sum_{i=1}^{n} m_i(x_i - x_{i-1}) \quad \text{其中} \ m_i = \inf_{x \in [x_{i-1}, x_i]} f(x)
+\]
+- 上和：
+\[
+U(f,P) = \sum_{i=1}^{n} M_i(x_i - x_{i-1}) \quad \text{其中} \ M_i = \sup_{x \in [x_{i-1}, x_i]} f(x)
+\]
+
+我们称函数 $f$ 是 Riemann 可积的，当且仅当：
+\[
+\sup_{P} L(f,P) = \inf_{P} U(f,P)
+\]
+此公共值定义为 $\int_a^b f(x)\,dx$，即 Riemann 积分值。
+
+这一准则推广到二维函数时，同样定义对每个小矩形上的最小值与最大值，构造上下 Darboux 和。
+
+\paragraph{Lebesgue准则（现代视角下的Riemann可积条件）}
+
+进一步研究表明，Riemann 可积性的一个现代刻画是：
+\begin{quote}
+函数 $f$ 在区间 $[a,b]$ 上 Riemann 可积，当且仅当 $f$ 在该区间上的 \textbf{不连续点集合的 Lebesgue 测度为零}。
+\end{quote}
+
+这个结果通常被称为 \textbf{Lebesgue 准则}，尽管其本质仍是对 Riemann 可积的描述。它指出，函数可以有无穷多个间断点，只要这些点的总“测度”（直观上即“大小”）为零，它仍可 Riemann 可积。
+
+例如：
+- Dirichlet 函数 $f(x) = \chi_{\mathbb{Q}}(x)$ 在 $[0,1]$ 上到处不连续，\textbf{不可积}；
+- 而 Thomae 函数（有理数处值为 $1/q$，否则为 $0$）则在 $[0,1]$ 上不连续点为可数集，\textbf{Riemann 可积}。
+
+这些结果体现出 Riemann 可积性对函数间断行为有一定容忍度，但仍无法处理更复杂结构（如分形或不可测集）。
+
+\subsection{局限性分析}
+
+尽管 Riemann 面积定义在平滑函数和规则区域上效果良好，但在处理一些更复杂情况时会遇到本质限制：
+
+\paragraph{（1）康托集}
+
+康托集（Cantor set）是一个经典的反例，它展示了“不可数”“稀疏”“测度为零”等概念的结合，构造如下：
+
+\begin{itemize}
+    \item 初始设 $C_0 = [0,1]$。
+    \item 第一步，从中间去除开区间 $(\tfrac{1}{3}, \tfrac{2}{3})$，得到 $C_1 = [0,\tfrac{1}{3}] \cup [\tfrac{2}{3},1]$。
+    \item 第二步，对 $C_1$ 的两个闭区间分别去除各自中间三分之一：
+    \[
+    C_2 = [0,\tfrac{1}{9}] \cup [\tfrac{2}{9},\tfrac{1}{3}] \cup [\tfrac{2}{3},\tfrac{7}{9}] \cup [\tfrac{8}{9},1]
+    \]
+    \item 第 $n$ 步中，对 $C_{n-1}$ 中每个闭区间都去掉其中间三分之一，得到 $2^n$ 个长度为 $3^{-n}$ 的闭区间。
+\end{itemize}
+
+最终康托集定义为所有这些步骤中的剩余区间的交集：
+\[
+\mathcal{C} = \bigcap_{n=0}^{\infty} C_n
+\]
+
+这个集合具有以下性质：
+
+\begin{itemize}
+    \item 它是闭集，且无处稠密；
+    \item 不可数，其点集可与 $[0,1]$ 建立一一对应；
+    \item Lebesgue 测度为零：每一步删除区间的总长度为
+    \[
+    \sum_{n=1}^{\infty} 2^{n-1} \cdot \frac{1}{3^n} = 1
+    \]
+    故剩下的 $\mathcal{C}$ 长度为 $0$。
+\end{itemize}
+
+康托集无法通过有限个矩形近似覆盖，因此也无法用 Riemann 方法定义其“面积”。
+
+\paragraph{（2）有复杂边界的集合}
+
+设 $E$ 是一个在单位正方形内有锯齿状边界的区域（例如某些分形结构），这些边界虽长，但其整体区域并不能很好地被有限矩形逼近，从而无法定义 Riemann 面积。
+
+\paragraph{（3）函数图像面积不可定义}
+
+考虑函数
+\[
+f(x) = 
+\begin{cases}
+  1, & x \in \mathbb{Q} \\
+  0, & x \notin \mathbb{Q}
+\end{cases}
+\]
+这是Dirichlet 函数，它在 $[0,1]$ 上处处不连续，因此不可 Riemann 可积。由于其积分不存在，函数图像下方的“面积”也无法通过传统积分定义进行刻画。
+
+这些例子说明了：Riemann 面积本质上要求区域和函数具备某种“连续性”或“规则性”，而现实中许多集合和函数远非如此。因此我们需要更加一般的定义 —— 这就引出了 Lebesgue 测度理论的引入。
+
+\section{Riemann到Lebesgue}
+
+为了更一般地定义面积，数学家发展出测度理论。我们希望对集合本身的“大小”进行刻画，避免仅依赖函数连续性或几何直觉。测度的引入为 Lebesgue 理论提供了基础支持。
+
+\subsection{测度理论的引入}
+
+\paragraph{外测度（Outer Measure）}
+
+给定集合 $E \subset \mathbb{R}$，定义其 Lebesgue 外测度为：
+\[
+m^*(E) = \inf \left\{ \sum_{i=1}^{\infty} \ell(I_i) \;\middle|\; E \subset \bigcup_{i=1}^{\infty} I_i,\ I_i \text{ 为开区间} \right\}
+\]
+其中 $\ell(I_i)$ 表示区间 $I_i$ 的长度。
+
+\paragraph{可测集（Measurable Set）}
+
+一个集合 $E \subset \mathbb{R}$ 被称为 Lebesgue 可测的，如果对任意集合 $A$，都有：
+\[
+m^*(A) = m^*(A \cap E) + m^*(A \setminus E)
+\]
+这表示 $E$ 与任意集合之间的测度“相容”，不会引入额外“大小”。
+
+所有可测集构成一个 $\sigma$-代数，记作 $\mathcal{L}$，在其上可以定义测度函数 $m(E)$，称为 Lebesgue 测度。此时：
+\[
+m(E) = m^*(E),\quad \text{当 } E \in \mathcal{L}
+\]
+
+\paragraph{Lebesgue 测度的性质}
+
+\begin{itemize}
+    \item 一致性：普通区间的 Lebesgue 测度等于其长度；
+    \item 可数可加性：若 $E = \bigsqcup_{i=1}^{\infty} E_i$（互不相交），则 $m(E) = \sum m(E_i)$；
+    \item 单调性：若 $E \subset F$，则 $m(E) \leq m(F)$；
+    \item 平移不变性：$m(E + a) = m(E)$，对任意 $a \in \mathbb{R}$。
+\end{itemize}
+
+\subsection{Riemann 积分的本质缺陷}
+
+Riemann 积分是通过对定义域的划分、取函数值、加权求和，再取极限来定义的。这种方法的本质在于：
+
+\begin{itemize}
+    \item 它是从 \textbf{自变量（定义域）方向} 逼近积分值；
+    \item 要求函数在绝大多数区间上表现“良好”；
+    \item 对区域和函数的不规则性敏感，尤其对不连续点。
+\end{itemize}
+
+这导致它在处理以下问题时遇到困难：
+
+\begin{itemize}
+    \item 极端间断的函数（如 Dirichlet 函数）；
+    \item 有“零宽度”但“无限点”的集合（如康托集）；
+    \item 在高维空间中的复杂结构。
+\end{itemize}
+
+这些问题启发数学家寻找更灵活的积分理论——即 Lebesgue 理论。
+
+\subsection{Lebesgue 积分的基本思想}
+
+与 Riemann 积分从横向分割定义域的方式不同，Lebesgue 选择从 \textbf{纵向分割函数值域} 出发：
+
+\begin{itemize}
+    \item 将函数值分割为若干水平带；
+    \item 对每一水平带，求其对应的原像（即哪些自变量落入该值带）；
+    \item 用\textbf{测度（measure）}来计算这些原像的“长度”或“面积”；
+    \item 加权求和，形成 Lebesgue 积分。
+\end{itemize}
+
+Lebesgue 积分的形式定义如下：
+
+设 $f: \mathbb{R} \to [0, \infty]$ 为非负可测函数，则
+\[
+\int f = \sup\left\{ \int \phi \;\middle|\; 0 \leq \phi \leq f,\ \phi\ \text{为简单函数} \right\}
+\]
+其中简单函数的形式为：
+\[
+\phi(x) = \sum_{i=1}^n a_i \chi_{E_i}(x)
+\]
+$E_i$ 为可测集，$\chi_{E_i}$ 为其指示函数。
+
+\subsection{测度与面积：从长度到广义体积}
+
+Lebesgue 理论的基础是“测度”。我们希望对任意集合 $E \subset \mathbb{R}^n$ 定义其“大小”，即测度 $m(E)$，这将成为面积的推广。
+
+特别地：
+\begin{itemize}
+    \item 一维 Lebesgue 测度对应于“长度”；
+    \item 二维 Lebesgue 测度对应于“面积”；
+    \item 更高维度则表示“广义体积”。
+\end{itemize}
+
+\subsection{Lebesgue 积分的优势}
+
+Lebesgue 积分相比 Riemann 积分具有如下优势：
+
+\begin{enumerate}
+    \item \textbf{可积性条件更宽泛}：
+
+    若 $f$ 有界并在 $[a,b]$ 上可测，且其间断点集合测度为零，则 $f$ 是 Lebesgue 可积的。Lebesgue 理论甚至允许 $f$ 无界，只要 $\int |f| < \infty$。
+
+    \item \textbf{极限交换性更强}：
+
+    若 $f_n \to f$ 几乎处处，且存在一个可积函数 $g$ 满足 $|f_n| \leq g$，则
+    \[
+    \int f_n \to \int f
+    \]
+    这即为著名的 \textbf{主导收敛定理（Dominated Convergence Theorem）}，Riemann 理论下难以成立。
+
+    \item \textbf{能处理更广泛的集合与函数}：
+
+    \begin{itemize}
+        \item 康托集可以定义测度；
+        \item Thomae 函数（定义为 $f(x) = \begin{cases} \frac{1}{q}, & x = \frac{p}{q} \in \mathbb{Q} \\ 0, & x \notin \mathbb{Q} \end{cases}$）可积但处处不连续；
+        \item 非常不规则的函数图像下方“面积”也可定义。
+    \end{itemize}
+\end{enumerate}
+
+\subsection{小结：Riemann 向 Lebesgue 的范式转变}
+
+Riemann 积分强调函数在区域上的局部一致性，适合处理“规则函数 + 规则区域”的问题。而 Lebesgue 理论则从集合的结构出发，以测度构建起更强大的面积理论。
+
+这种转变：
+\begin{itemize}
+    \item 是数学从\textbf{具体到抽象}、\textbf{从操作性到结构性}的发展；
+    \item 推动了现代分析、概率论、泛函分析等领域的进步；
+    \item 是理解高维空间中面积、体积与极限结构的关键一步。
+\end{itemize}
+
+\section{曲面面积的定义}
+
+在前述积分与测度理论的基础上，我们进一步探讨如何在三维空间中定义二维曲面的面积。与平面区域不同，曲面在空间中可能弯曲、扭转，其面积不能简单地用平面几何方法测量，而需引入参数化、微分结构与几何工具。
+
+\subsection{参数化曲面的面积定义}
+
+设 $S$ 为三维空间中一片光滑曲面，其可以由一个参数区域 $D \subset \mathbb{R}^2$ 上的光滑映射给出：
+\[
+\boldsymbol{r}(u,v) = (x(u,v),\ y(u,v),\ z(u,v)) \quad \text{其中 } (u,v) \in D
+\]
+这样的 $\boldsymbol{r}$ 被称为曲面的参数方程。通过它，我们将二维区域 $D$ 映射为三维空间中的曲面 $S$。
+
+在这种参数化下，曲面的面积定义为：
+\[
+A(S) = \iint_D \left\| \frac{\partial \boldsymbol{r}}{\partial u} \times \frac{\partial \boldsymbol{r}}{\partial v} \right\| \, du\,dv
+\]
+其中 $\frac{\partial \boldsymbol{r}}{\partial u}$ 和 $\frac{\partial \boldsymbol{r}}{\partial v}$ 是曲面的两个切向量，$\times$ 表示向量叉积。该面积公式的几何意义是：在每个点处，用切向量张成的平行四边形的面积作为面元，对整个参数区域进行积分。
+
+\subsection{第一基本形式与面积元素}
+
+微分几何中，引入第一基本形式：
+\[
+I = E\,du^2 + 2F\,du\,dv + G\,dv^2
+\]
+其中
+\[
+E = \left\langle \frac{\partial \boldsymbol{r}}{\partial u}, \frac{\partial \boldsymbol{r}}{\partial u} \right\rangle, \quad
+F = \left\langle \frac{\partial \boldsymbol{r}}{\partial u}, \frac{\partial \boldsymbol{r}}{\partial v} \right\rangle, \quad
+G = \left\langle \frac{\partial \boldsymbol{r}}{\partial v}, \frac{\partial \boldsymbol{r}}{\partial v} \right\rangle
+\]
+面积元由第一基本形式导出：
+\[
+dS = \sqrt{EG - F^2} \, du\,dv
+\]
+这与前述叉积公式等价，因此曲面面积也可记为：
+\[
+A(S) = \iint_D \sqrt{EG - F^2} \, du\,dv
+\]
+
+\subsection{面积定义的几何不变性}
+
+值得注意的是，曲面面积的定义是坐标无关的 —— 即对参数变化保持不变。这体现在面积元是由切空间的几何结构导出的，与具体坐标系无关。
+
+在更抽象的微分几何语言中，曲面的面积可视为对其 Riemannian 度量导出的面积形式（area form）进行积分，这为后续推广到更高维的流形奠定基础。
+
+\subsection{举例说明}
+
+\paragraph{例1：球面上的面积}
+
+考虑单位球面 $S^2$，参数化为：
+\[
+\boldsymbol{r}(\theta,\phi) = (\sin\theta \cos\phi, \sin\theta \sin\phi, \cos\theta),\quad 0 < \theta < \pi,\ 0 < \phi < 2\pi
+\]
+计算得到：
+\[
+\left\| \frac{\partial \boldsymbol{r}}{\partial \theta} \times \frac{\partial \boldsymbol{r}}{\partial \phi} \right\| = \sin\theta
+\]
+因此球面面积为：
+\[
+A(S^2) = \iint_{[0,\pi] \times [0,2\pi]} \sin\theta \, d\theta\,d\phi = 4\pi
+\]
+
+\paragraph{例2：柱面的一块区域}
+
+考虑圆柱面 $x = \cos\theta,\ y = \sin\theta,\ z = z$，参数区域为 $\theta \in [0, 2\pi],\ z \in [0, h]$，计算得到面积元为 $dS = d\theta\,dz$，故其面积为 $2\pi h$，与我们熟悉的“圆柱侧面积”一致。
+
+\subsection{小结}
+
+曲面面积的定义依赖于光滑参数化与切空间的几何结构。面积元的构造体现了从欧几里得几何向流形几何的自然过渡。这一框架不仅统一了不同类型曲面的面积计算方式，也为将面积推广到高维空间中的“体积”打下基础。
+
+\section{高维推广}
+
+随着几何对象复杂度的提升，我们希望将“面积”这一概念推广至更一般的空间和维度。例如，如何定义 $\mathbb{R}^4$ 空间中三维超曲面的“体积”？这就需要将面积概念提升为更一般的 $k$ 维测度。
+
+\subsection{从曲面到 $k$ 维流形}
+
+设 $M$ 是嵌入在 $\mathbb{R}^n$ 中的 $k$ 维可微流形，其可以由参数域 $D \subset \mathbb{R}^k$ 上的 $C^1$ 映射定义：
+\[
+\boldsymbol{r}(u_1, \dots, u_k) = (x_1(u),\ x_2(u),\ \dots,\ x_n(u)),\quad u = (u_1, \dots, u_k) \in D
+\]
+$\boldsymbol{r}$ 被称为参数化映射，它将 $k$ 维参数域 $D$ 映射到 $n$ 维空间中构成 $M$。
+
+我们希望测量 $\boldsymbol{r}(D)$ 的“体积”，这将成为高维面积的定义问题。
+
+\subsection{高维体积元与Jacob行列式}
+
+对任意点 $u \in D$，我们考虑切空间 $T_u M$，其由 $k$ 个向量组成：
+\[
+\frac{\partial \boldsymbol{r}}{\partial u_1},\ \dots,\ \frac{\partial \boldsymbol{r}}{\partial u_k}
+\]
+我们将这些向量作为列向量构成 $n \times k$ 的Jacob矩阵 $J(u)$，其体积元素（$k$ 维平行多面体体积）定义为：
+\[
+\omega(u) = \sqrt{\det \left( J(u)^\top J(u) \right)} = \left\| \frac{\partial \boldsymbol{r}}{\partial u_1} \wedge \cdots \wedge \frac{\partial \boldsymbol{r}}{\partial u_k} \right\|
+\]
+
+因此，$M$ 的 $k$ 维体积定义为：
+\[
+\operatorname{Vol}_k(M) = \int_D \omega(u) \, du_1 \cdots du_k
+\]
+
+这一定义等价于在参数域上对“体积密度”积分，是高维测度的自然推广形式。
+
+\subsection{Hausdorff测度：最一般的推广}
+
+在更一般的测度论框架中，$k$ 维面积被归入 Hausdorff 测度的范畴。
+
+设 $E \subset \mathbb{R}^n$，对任意 $\delta > 0$，定义
+\[
+\mathcal{H}^k_\delta(E) = \inf\left\{ \sum_{i} (\operatorname{diam} U_i)^k \;\middle|\; E \subset \bigcup U_i,\ \operatorname{diam} U_i < \delta \right\}
+\]
+再取极限：
+\[
+\mathcal{H}^k(E) = \lim_{\delta \to 0} \mathcal{H}^k_\delta(E)
+\]
+这称为 $k$ 维 Hausdorff 测度。它满足如下性质：
+\begin{itemize}
+    \item $\mathcal{H}^1$ 是常规的“长度”；
+    \item $\mathcal{H}^2$ 是我们定义的“面积”；
+    \item $\mathcal{H}^k$ 推广了体积到任意维数；
+    \item $\mathcal{H}^s$ 还可用于描述分形维度。
+\end{itemize}
+
+通过 Hausdorff 测度，我们可为非常不规则或不可参数化的集合赋予“体积”的含义。
+
+\subsection{几何测度论视角}
+
+几何测度论（Geometric Measure Theory）进一步将微分结构与测度结构结合起来，发展出：
+\begin{itemize}
+    \item 面积泛函（area functional）；
+    \item 最小曲面（minimal surface）；
+    \item 曲率与变分；
+    \item 体积在变换群作用下的不变性。
+\end{itemize}
+
+它使得我们能研究如“肥皂膜形状”、“高维最短路径”、“曲面变分”的问题，成为现代分析与几何交汇的重要领域。
+
+\subsection{小结}
+
+从二维曲面的面积出发，我们可通过参数化映射与微分结构，将面积推广至高维空间中的 $k$ 维体积。进一步地，通过 Hausdorff 测度与几何测度论，甚至能处理非光滑对象的“体积”问题。
+
+高维面积不仅是理论工具，也在现代数学物理（如相对论弯曲时空、流形积分、分形几何）中发挥核心作用。
+
+\section{总结}
+
+本文围绕“面积”这一基本几何量展开，从经典的 Riemann 积分入手，逐步揭示其在处理间断函数和复杂区域时的局限性，进而引出 Lebesgue 测度与积分作为对传统理论的突破与拓展。
+
+在 Lebesgue 框架下，积分不再依赖于定义域的划分，而是通过对函数值层的测度累积，极大地拓展了可积函数的范围，也使得许多非光滑、非规则结构的面积具有了明确的数学定义。Lebesgue 理论不仅是实变函数与现代分析的基础，也在概率论、泛函分析等诸多领域中起到核心作用。
+
+在此基础上，我们进一步探讨了如何定义曲面面积，通过向量叉积、第一基本形式、面积元等工具，将二维区域推广至三维空间中曲面，进而通过参数映射、Jacobian 行列式推广至更高维的 $k$ 维流形体积。最后，通过 Hausdorff 测度与几何测度论，我们得以为一般集合（包括非参数化、甚至分形结构）赋予“体积”的概念，构建出一套具有统一性与广泛适应性的测度体系。
+
+从最初对平面图形的面积直觉出发，到最终抽象的高维体积与测度理论， 体现了统一、一般化的数学美。
+
+
+\begin{thebibliography}{99} 
+    \bibitem{ref1} B.A.卓里奇. 《数学分析（第七版）》. 高等教育出版社，第九章，第五章，第十章.
+    \bibitem{ref2} Walter Rudin. \emph{Principles of Mathematical Analysis}. Third Edition, McGraw-Hill, 1976.
+    \bibitem{ref3} H.L. Royden, P.M. Fitzpatrick. \emph{Real Analysis}. Fourth Edition, Pearson, 2010.
+    \bibitem{ref4} Terence Tao. \emph{An Introduction to Measure Theory}. American Mathematical Society, 2011.
+    \bibitem{ref5} Lawrence C. Evans, Ronald F. Gariepy. \emph{Measure Theory and Fine Properties of Functions}. CRC Press, 2015.
+    \bibitem{ref6} John M. Lee. \emph{Introduction to Smooth Manifolds}. Springer, 2003.
+    \bibitem{ref7} Wikipedia contributors. “Cantor set.” Wikipedia, The Free Encyclopedia. \url{https://en.wikipedia.org/wiki/Cantor_set}
+    \bibitem{ref8} Wikipedia contributors. “Thomae's function.” Wikipedia, The Free Encyclopedia. \url{https://en.wikipedia.org/wiki/Thomae%27s_function}
+    \bibitem{ref9} Wikipedia contributors. “Hausdorff measure.” Wikipedia, The Free Encyclopedia. \url{https://en.wikipedia.org/wiki/Hausdorff_measure}
+\end{thebibliography}
+\end{document}
